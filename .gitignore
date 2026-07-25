@@ -1,0 +1,24 @@
+# Biên dịch Java
+*.class
+*.jar
+*.war
+
+# Thư mục build / out của IDE
+bin/
+build/
+dist/
+out/
+target/
+
+# Cấu hình IDE (NetBeans, Eclipse, IntelliJ IDEA)
+.nbproject/
+nbproject/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# File tạm hệ thống
+.DS_Store
+Thumbs.db
