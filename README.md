@@ -44,7 +44,7 @@ Dự án được phát triển nhằm tự động hóa quy trình quản lý n
 
 ### Bước 1: Khởi động CSDL trên XAMPP
 1. Mở ứng dụng **XAMPP Control Panel**.
-2. Nhấn nút **Start** tại dòng **MySQL** (và Apache nếu cần dùng phpMyAdmin).
+2. Nhấn nút **Start** tại dòng **MySQL** và **Apache**.
 3. Truy cập vào Tạo mới cơ sở dữ liệu và chọn chức năng nhập
 <img width="1085" height="580" alt="Screenshot 2026-07-25 154950" src="https://github.com/user-attachments/assets/d8cc85d8-fefe-43bc-a11d-bc2871f106f1" />
 4. Chọn tệp cơ sở dữ liệu và chọn Nhập
