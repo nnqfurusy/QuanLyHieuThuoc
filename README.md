@@ -45,10 +45,17 @@ Dự án được phát triển nhằm tự động hóa quy trình quản lý n
 ### Bước 1: Khởi động CSDL trên XAMPP
 1. Mở ứng dụng **XAMPP Control Panel**.
 2. Nhấn nút **Start** tại dòng **MySQL** và **Apache**.
-3. Truy cập vào Tạo mới cơ sở dữ liệu và chọn chức năng nhập
-<img width="1085" height="580" alt="Screenshot 2026-07-25 154950" src="https://github.com/user-attachments/assets/d8cc85d8-fefe-43bc-a11d-bc2871f106f1" />
-4. Chọn tệp cơ sở dữ liệu và chọn Nhập
-<img width="1082" height="301" alt="image" src="https://github.com/user-attachments/assets/04f898d4-6a4b-42ac-94e2-82561dce0f81" />
+<img width="494" height="306" alt="image" src="https://github.com/user-attachments/assets/27c3648e-e14b-470c-a65a-a205938b8aaa" />
+
+4. Chọn chức năng Tạo mới cơ sở dữ liệu và đặt tên là **ql_nhathuoc**
+<img width="734" height="137" alt="image" src="https://github.com/user-attachments/assets/886ddff2-ccd4-4675-8beb-dbc0143429d1" />
+
+5. Chọn chức năng Nhập trong cơ sở dữ liệu **ql_nhathuoc**
+<img width="952" height="251" alt="image" src="https://github.com/user-attachments/assets/5c91ee77-f7a7-4de2-a24c-a01255dbf8f6" />
+
+6. Chọn tệp cơ sở dữ liệu và chọn Nhập
+<img width="952" height="253" alt="image" src="https://github.com/user-attachments/assets/74cc7370-9782-493b-ba30-395b3c24d1f3" />
+
 
 ### Bước 2: Clone kho lưu trữ về máy
 Mở Terminal / Command Prompt và chạy lệnh:
