@@ -1,4 +1,4 @@
-package btl_csdl;
+package btl;
 
 import java.sql.*;
 
