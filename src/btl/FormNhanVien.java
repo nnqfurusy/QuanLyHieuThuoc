@@ -1,4 +1,4 @@
-package btl;
+package btl_csdl;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,7 +13,7 @@ public class FormNhanVien extends JFrame {
     private DefaultTableModel model;
 
     private JTextField txtMa, txtTen, txtGT, txtSDT, txtLuong, txtMK;
-    private JButton btnThem, btnSua, btnXoa, btnClear, btnLoad;
+    private JButton btnThem, btnSua, btnXoa, btnTim, btnClear, btnLoad;
 
     public FormNhanVien() {
         setTitle("Quản Lý Nhân Viên");
@@ -27,7 +27,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                     GIAO DIỆN
+    //                    GIAO DIỆN
     // =====================================================
     private void initUI() {
 
@@ -48,24 +48,28 @@ public class FormNhanVien extends JFrame {
         txtLuong = new JTextField();
         txtMK = new JTextField();
 
-        l1.setBounds(20, 20, 120, 30);  txtMa.setBounds(140, 20, 200, 30);
-        l2.setBounds(20, 60, 120, 30);  txtTen.setBounds(140, 60, 200, 30);
-        l3.setBounds(20, 100, 120, 30); txtGT.setBounds(140, 100, 200, 30);
-        l4.setBounds(20, 140, 120, 30); txtSDT.setBounds(140, 140, 200, 30);
-        l5.setBounds(20, 180, 120, 30); txtLuong.setBounds(140, 180, 200, 30);
-        l6.setBounds(20, 220, 120, 30); txtMK.setBounds(140, 220, 200, 30);
+        l1.setBounds(20, 20, 120, 30);   txtMa.setBounds(140, 20, 200, 30);
+        l2.setBounds(20, 60, 120, 30);   txtTen.setBounds(140, 60, 200, 30);
+        l3.setBounds(20, 100, 120, 30);  txtGT.setBounds(140, 100, 200, 30);
+        l4.setBounds(20, 140, 120, 30);  txtSDT.setBounds(140, 140, 200, 30);
+        l5.setBounds(20, 180, 120, 30);  txtLuong.setBounds(140, 180, 200, 30);
+        l6.setBounds(20, 220, 120, 30);  txtMK.setBounds(140, 220, 200, 30);
 
         btnThem  = new JButton("Thêm");
         btnSua   = new JButton("Sửa");
         btnXoa   = new JButton("Xóa");
+        btnTim   = new JButton("Tìm kiếm");
         btnClear = new JButton("Clear");
         btnLoad  = new JButton("Tải lại");
 
-        btnThem.setBounds(380, 20, 120, 40);
-        btnSua.setBounds(380, 70, 120, 40);
-        btnXoa.setBounds(380, 120, 120, 40);
-        btnClear.setBounds(380, 170, 120, 40);
-        btnLoad.setBounds(380, 220, 120, 40);
+        // Bố trí 6 nút thành 2 cột bên phải cho cân đối
+        btnThem.setBounds(370, 20, 110, 40);
+        btnSua.setBounds(370, 75, 110, 40);
+        btnXoa.setBounds(370, 130, 110, 40);
+        
+        btnTim.setBounds(490, 20, 110, 40);
+        btnClear.setBounds(490, 75, 110, 40);
+        btnLoad.setBounds(490, 130, 110, 40);
 
         panelTop.add(l1); panelTop.add(txtMa);
         panelTop.add(l2); panelTop.add(txtTen);
@@ -77,6 +81,7 @@ public class FormNhanVien extends JFrame {
         panelTop.add(btnThem);
         panelTop.add(btnSua);
         panelTop.add(btnXoa);
+        panelTop.add(btnTim);
         panelTop.add(btnClear);
         panelTop.add(btnLoad);
 
@@ -109,11 +114,12 @@ public class FormNhanVien extends JFrame {
         add(new JScrollPane(tblNV), BorderLayout.CENTER);
 
         // =====================================================
-        //               SỰ KIỆN NÚT BẤM
+        //                  SỰ KIỆN NÚT BẤM
         // =====================================================
         btnThem.addActionListener(e -> addNV());
         btnSua.addActionListener(e -> editNV());
         btnXoa.addActionListener(e -> deleteNV());
+        btnTim.addActionListener(e -> searchNV());
         btnClear.addActionListener(e -> clearForm());
         btnLoad.addActionListener(e -> {
             clearForm();
@@ -149,7 +155,66 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //               HÀM KIỂM TRA TRÙNG SĐT
+    //                    TÌM KIẾM NV (ĐÃ SỬA CHUẨN)
+    // =====================================================
+    private void searchNV() {
+        String maKeyword = txtMa.getText().trim();
+        String tenKeyword = txtTen.getText().trim();
+
+        if (maKeyword.isEmpty() && tenKeyword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã NV hoặc Tên NV cần tìm kiếm vào ô tương ứng!");
+            return;
+        }
+
+        model.setRowCount(0);
+        try (Connection conn = DatabaseHelper.connect()) {
+            StringBuilder sql = new StringBuilder("SELECT * FROM NHAN_VIEN WHERE 1=1");
+            boolean hasMa = !maKeyword.isEmpty();
+            boolean hasTen = !tenKeyword.isEmpty();
+
+            if (hasMa) {
+                sql.append(" AND MaNV LIKE ?");
+            }
+            if (hasTen) {
+                sql.append(" AND HoTen LIKE ?");
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            int paramIndex = 1;
+            if (hasMa) {
+                ps.setString(paramIndex++, "%" + maKeyword + "%");
+            }
+            if (hasTen) {
+                ps.setString(paramIndex++, "%" + tenKeyword + "%");
+            }
+
+            ResultSet rs = ps.executeQuery();
+            boolean found = false;
+
+            while (rs.next()) {
+                found = true;
+                model.addRow(new Object[]{
+                        rs.getString("MaNV"),
+                        rs.getString("HoTen"),
+                        rs.getString("GioiTinh"),
+                        rs.getString("SDT"),
+                        rs.getDouble("Luong"),
+                        rs.getString("MatKhau")
+                });
+            }
+
+            if (!found) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên phù hợp!");
+                loadData(); // Tải lại toàn bộ bảng nếu không tìm thấy
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi tìm kiếm:\n" + e.getMessage());
+        }
+    }
+
+    // =====================================================
+    //                HÀM KIỂM TRA TRÙNG SĐT
     // =====================================================
     private boolean isDuplicateSDT(String sdt, String maNV) {
         if (sdt.isEmpty()) return false;
@@ -159,7 +224,7 @@ public class FormNhanVien extends JFrame {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, sdt);
-            ps.setString(2, maNV == null ? "" : maNV); // maNV để bỏ qua chính nó khi bấm Sửa
+            ps.setString(2, maNV == null ? "" : maNV);
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -172,7 +237,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                     THÊM NV
+    //                       THÊM NV
     // =====================================================
     private void addNV() {
         String maNV = txtMa.getText().trim();
@@ -184,7 +249,6 @@ public class FormNhanVien extends JFrame {
             return;
         }
 
-        // Validate SĐT
         if (!sdt.isEmpty()) {
             if (!sdt.matches("^0\\d{9,10}$")) {
                 JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ! (Phải bắt đầu bằng 0 và gồm 10-11 chữ số)");
@@ -233,7 +297,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                     SỬA NV
+    //                       SỬA NV
     // =====================================================
     private void editNV() {
         String maNV = txtMa.getText().trim();
@@ -244,13 +308,11 @@ public class FormNhanVien extends JFrame {
             return;
         }
 
-        // Validate SĐT
         if (!sdt.isEmpty()) {
             if (!sdt.matches("^0\\d{9,10}$")) {
                 JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ! (Phải bắt đầu bằng 0 và gồm 10-11 chữ số)");
                 return;
             }
-            // Truyền maNV vào để không bị trùng với chính nhân viên đang sửa
             if (isDuplicateSDT(sdt, maNV)) {
                 JOptionPane.showMessageDialog(this, "Số điện thoại '" + sdt + "' đã tồn tại ở nhân viên khác!");
                 return;
@@ -295,11 +357,8 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                     XOÁ NV
+    //                       XOÁ NV
     // =====================================================
-    // =====================================================
-//                     XOÁ NV
-// =====================================================
     private void deleteNV() {
         String maNV = txtMa.getText().trim();
 
@@ -308,7 +367,6 @@ public class FormNhanVien extends JFrame {
             return;
         }
 
-        // --- CHẶN XÓA TÀI KHOẢN ADMIN HỆ THỐNG ---
         if (maNV.equalsIgnoreCase("ADMIN01") || maNV.equalsIgnoreCase("ADMIN")) {
             JOptionPane.showMessageDialog(this, 
                     "Không thể xóa tài khoản Quản trị viên (Admin) của hệ thống!", 
@@ -352,7 +410,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                    CLEAR FORM
+    //                     CLEAR FORM
     // =====================================================
     private void clearForm() {
         txtMa.setText("");
@@ -365,7 +423,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                    FILL FORM
+    //                     FILL FORM
     // =====================================================
     private void fillForm() {
         int r = tblNV.getSelectedRow();
@@ -376,7 +434,6 @@ public class FormNhanVien extends JFrame {
         txtGT.setText(model.getValueAt(r, 2) != null ? model.getValueAt(r, 2).toString() : "");
         txtSDT.setText(model.getValueAt(r, 3) != null ? model.getValueAt(r, 3).toString() : "");
         
-        // Hiển thị Lương dưới dạng số chuẩn (tránh hiện kiểu Sci-notation như 1.5E7)
         if (model.getValueAt(r, 4) != null) {
             try {
                 double l = Double.parseDouble(model.getValueAt(r, 4).toString());
@@ -392,7 +449,7 @@ public class FormNhanVien extends JFrame {
     }
 
     // =====================================================
-    //                    MAIN TEST
+    //                   MAIN TEST
     // =====================================================
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new FormNhanVien().setVisible(true));
