@@ -1,4 +1,4 @@
-package btl_csdl;
+package btl;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
