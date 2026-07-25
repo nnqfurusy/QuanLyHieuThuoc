@@ -1,4 +1,4 @@
-package btl_csdl;
+package btl;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
